@@ -1,0 +1,404 @@
+클라이언트와 HTTP로 통신합니다.
+HTTP 본문의 형식은 JSON입니다.
+특별히 표기된 경우를 제외하면 Content-Type 헤더는 application/json입니다.
+
+
+<회원가입>
+	POST /api/user
+
+	헤더
+		없음
+
+	파라미터
+		이름        타입     설명
+		account     문자열   새로 생성할 계정. 최대 길이 30.
+		password    문자열   새 계정의 비밀번호. 최대 길이 30.
+		nickname    문자열   새 계정의 닉네임. 최대 길이 30.
+
+	응답
+		이름        타입     설명
+		id      정수     유저를 가리키는 고유한 값
+
+	요청 예시
+		POST /api/user
+		Content-Type: application/json
+
+		{
+			"account": "hello",
+			"password": "world123",
+			"nickname": "john"
+		}
+
+	응답 예시
+		{
+			"id": 11
+		}
+
+
+<로그인>
+	POST /api/auth
+		
+	헤더
+		없음
+
+	파라미터
+		이름        타입      설명
+		account     문자열    로그인 할 계정
+		password    문자열    계정 비밀번호
+		
+	응답
+		이름        타입      설명
+		id          정수      유저의 고유 번호.
+		token       문자열    매 요청시 첨부해야 하는 인증 토큰.
+
+	요청 예시
+		POST /api/auth
+		Content-Type: application/json
+		
+		{
+			"account": "hello",
+			"password": "world123"
+		}
+		
+	응답 예시
+		{
+			"token": "qwer.asdf.zcxv."
+		}
+	
+<카테고리(게시판 탭) 생성>
+	POST /api/category
+		
+	헤더
+		이름            설명
+		Authorization   로그인 요청에서 응답받은 토큰
+		
+	파라미터
+		이름         타입       설명
+		label         문자열     새로 생성할 카테고리(게시판 탭) 이름. 최대 길이 10.
+		
+	응답
+		없음
+		
+	요청 예시
+		POST /api/category
+		Authorization: qwer.asdf.zxcv
+		Content-Type: application/json
+		
+		{
+			"label": "동해"
+		}
+		
+	응답 예시
+		없음
+
+<카테고리 목록 요청>
+	GET /api/category
+		
+	헤더
+		없음
+		
+	파라미터
+		없음
+		
+	응답
+		이름        타입            설명
+		list        문자열 배열     카테고리 이름의 배열.
+		
+	요청 예시
+		GET /api/category
+		
+	응답 예시
+		{
+			"list": ["자유", "인증", "동해", "서해", "남해"]
+		}
+
+<게시글 작성>
+	POST /api/post
+		
+	헤더
+		이름             설명
+		Authorization    로그인 요청에서 응답받은 토큰
+		
+	파라미터
+		이름         타입          설명
+		title        문자열        게시글 제목. 최대 길이 250.
+		content      문자열        게시글 본문. 최대 길이 10000.
+		category     문자열        게시글이 속할 카테고리 이름.
+		
+	응답
+		없음
+		
+	요청 예시
+		POST /api/post
+		Authorization: qwer.asdf.zxcv
+		Content-Type: application/json
+		
+		{
+			"title": "광어 인증",
+			"content": "...",
+			"category": "인증"
+		}
+		
+	응답 예시
+		없음
+
+<게시글 목록 요청, 검색 요청>
+	GET /api/post
+		
+	헤더
+		없음
+		
+	파라미터
+		이름        타입        설명
+		category    문자열      카테고리 이름. 이 카테고리에 속한 게시글들만 요청함. 
+		                        이 파라미터가 없으면 전체 게시글 목록이 반환됨.
+		cursor      문자열      목록의 다음 부분을 요청할 때 사용하는 파라미터.
+		                        이 파라미터가 없으면 목록의 제일 앞 부분이 반환됨.
+		
+	응답
+		이름                      타입        설명 
+		cursor                    정수        다음 목록 요청 시 사용해야 하는 cursor 값.
+		list                      배열        객체 배열. 길이 50.
+		list[0].id                정수        게시글의 고유 번호.
+		list[0].title             문자열      게시글 제목.
+		list[0].creationTime      문자열      게시글 생성 시각. UTC.
+		list[0].viewCount         정수        조회수.
+		list[0].likeCount         정수        좋아요 수.
+		list[0].dislikeCount      정수        싫어요 수.
+		list[0].category          문자열      게시글이 속한 카테고리 이름.
+		list[0].user              객체        
+		list[0].user.id           정수        게시글 작성자의 고유 번호.
+		list[0].user.nickname     문자열      게시글 작성자의 닉네임.
+		
+	요청 예시
+		GET /api/post?category=인증&cursor=123
+
+	응답 예시
+		{
+			"cursor": 173,
+			"list": [
+				{
+					"id": 123,
+					"title": "광어 인증",
+					"creationTime": "2022-10-09 12:00:00.000Z",
+					"viewCount": 123,
+					"likeCount": 12,
+					"dislikeCount": 3,
+					"category": "인증",
+					"user": {
+						"id": 12,
+						"nickname": "john"
+					}
+				},
+				...,
+				{
+					"id": 172,
+					...
+				}
+			]
+		}
+
+<게시글 본문 요청>
+	GET /api/post/{post id}
+	
+	헤더
+		없음
+		
+	파라미터
+		없음
+		
+	응답
+		게시글 목록/검색 요청의 응답과 유사함.
+		
+		이름           타입          설명
+		content        문자열        게시글 본문.
+		
+	요청 예시
+		GET /api/post/123
+		
+	응답 예시
+		{
+			"id": 123,
+			"title": "광어 인증",
+			"content": "...",
+			"creationTime": "2022-10-09 12:00:00.000Z",
+			"viewCount": 123,
+			"likeCount": 12,
+			"dislikeCount": 3,
+			"category": "인증",
+			"user": {
+				"id": 12,
+				"nickname": "john"
+			}
+		}
+
+<댓글 작성>
+	POST /api/post/{post id}/comment
+	
+	헤더
+		이름                설명
+		Authorization       로그인 요청에서 받은 인증 토큰.
+		
+	파라미터
+		이름           타입           설명
+		content        문자열         작성할 댓글 내용.
+		
+	응답
+		없음
+		
+	요청 예시
+		POST /api/post/123/comment
+		Authorization: qwer.asdf.zxcv
+		Content-Type: application/json
+		
+		{
+			"content": "...."
+		}
+		
+	응답 예시
+		없음
+
+<게시글의 댓글 목록 요청>
+	GET /api/post/{post id}/comment
+	
+	헤더
+		없음
+	
+	파라미터
+		이름          타입        설명
+		cursor        정수        목록의 다음 부분을 요청할 때 사용하는 파라미터.
+		                          이 파라미터가 없으면 목록의 제일 앞 부분이 반환됨.
+		
+	응답
+		이름                     타입        설명
+		cursor                   정수        다음 목록 요청 시 사용해야 하는 cursor 값.
+		list                     배열        객체 배열. 길이 50.    
+		list[0].content          문자열      댓글 본문.
+		list[0].creationTime     문자열      댓글 생성 시각. UTC.
+		list[0].user             객체        
+		list[0].user.id          정수        작성자의 고유 번호.
+		list[0].user.nickname    문자열      작성자의 닉네임.
+		
+	요청 예시
+		GET /api/post/123/comment
+		
+	응답 예시
+		{
+			"cursor": ,
+			"list": [
+				{
+					"content": "...",
+					"creationTime": "2022-10-09 12:00:00.000Z",
+					"user": {
+						"id": 13,
+						"nickname": "john"
+					}
+				},
+				...,
+				{
+					"content": "...",
+					...
+				}
+			]
+		}
+		
+<낚시 결과 업로드>
+	POST /api/history
+	
+	헤더
+		이름                       설명
+		Authorization              로그인 요청에서 받은 인증 토큰
+	
+	파라미터
+		이름           타입        설명
+		latitude       소수        낚시 사진 촬영한 장소의 위도.
+		longitude      소수        낚시 사진 촬영한 장소의 경도.
+		timestamp      문자열      낚시 사진 촬영한 시각. UTC.
+		
+	응답
+		이름           타입        설명
+		id             정수        낚시 결과에 대한 고유 번호.
+	
+	요청 예시
+		POST /api/history
+		Authorization: qwer.asdf.zxcv
+		Content-Type: application/json
+		
+		{
+			"latitude": 30.12,
+			"longitude": 123.12,
+			"timestamp": "2022-10-09 12:00:00.000Z"
+		}
+	
+	응답 예시
+		{
+			"id": 999
+		}
+
+<낚시한 물고기 사진 업로드>
+	PUT /api/history/{history id}/image
+	
+	헤더
+		이름               설명
+		Authorization      로그인 요청으로 받은 인증 토큰.
+		Content-Type       요청 본문의 타입. application/octet-stream.
+		
+	파라미터
+		없음
+		
+	응답
+		없음
+	
+	요청 예시
+		PUT /api/history/999/image
+		Authorization: qwer.asdf.zxcv
+		Content-Type: application/octet-stream
+		
+		[이미지 파일]
+		
+	응답 예시
+		없음
+		
+<물고기 이미지 분류 요청>
+	POST /api/classification/{history id}
+	
+	헤더
+		이름                    설명
+		Authorization           로그인 요청으로 받은 인증 토큰.
+		
+	파라미터
+		없음
+		
+	응답
+		이름        타입        설명
+		label       문자열      낚은 생선 이미지의 분류 결과.
+		
+	요청 예시
+		PUT /api/classification/999
+		Authorization: qwer.asdf.zxcv
+		
+	응답 예시
+		{
+			"label": "참치"
+		}
+		
+<물고기 대표 이미지 요청>
+	GET /api/fish/image
+	
+	헤더
+		없음
+		
+	파라미터
+		이름       타입         설명
+		lable      문자열       생선 이름.
+		
+	응답
+		생선 이미지 파일
+		
+	요청 예시
+		GET /api/fish/image?label=참치
+		
+	응답 예시
+		참치를 대표하는 이미지
+	
+		
