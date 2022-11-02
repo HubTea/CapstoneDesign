@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "744480165630",
+    "project_id": "fishid-ced69",
+    "storage_bucket": "fishid-ced69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744480165630:android:bb342890dbd3f9a6cbdfaf",
+        "android_client_info": {
+          "package_name": "com.example.fishid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "744480165630-kc26u63b8nganfjpoq9ndghnopg3vj67.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUosxKuZ7SZvCRMobD6YnvdGAG_FHQuxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "744480165630-kc26u63b8nganfjpoq9ndghnopg3vj67.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
