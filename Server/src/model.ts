@@ -1,8 +1,6 @@
 import {
     Model, 
     Table, 
-    PrimaryKey,
-    AutoIncrement,
     Column,
     HasMany,
     ForeignKey,
