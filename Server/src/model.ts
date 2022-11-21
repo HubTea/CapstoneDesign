@@ -6,7 +6,8 @@ import {
     ForeignKey,
     DataType,
     CreatedAt,
-    DeletedAt
+    DeletedAt,
+    Unique
 } from 'sequelize-typescript';
 
 interface UserAttribute {
@@ -40,6 +41,7 @@ export class User extends Model<UserAttribute> {
     @Column
     hashVersion: UserAttribute['hashVersion'];
 
+    @Unique
     @Column(DataType.STRING(30))
     account: UserAttribute['account'];
 
@@ -122,6 +124,7 @@ interface CategoryAttribute {
     omitNull: true
 })
 export class Category extends Model<CategoryAttribute> {
+    @Unique
     @Column(DataType.STRING(10))
     label: CategoryAttribute['label'];
 
