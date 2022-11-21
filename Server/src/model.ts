@@ -9,146 +9,198 @@ import {
     DeletedAt
 } from 'sequelize-typescript';
 
-@Table({
-    paranoid: true,
-    omitNull: true
-})
-export class User extends Model {
-    @Column(DataType.STRING(30))
-    nickname: string = '';
-
-    @Column
-    hash: string = '';
-
-    @Column
-    salt: string = '';
-
-    @Column
-    hashVersion: number = 0;
-
-    @Column(DataType.STRING(30))
-    account: string = '';
-
-    @Column
-    admin: boolean = false;
-
-    @CreatedAt
-    createdTime: Date = new Date();
-
-    @DeletedAt
-    deletedTime: Date = new Date();
-
-    @HasMany(() => Post)
-    postList: Post[] = [];
-
-    @HasMany(() => History)
-    historyList: Post[] = [];
-
-    @HasMany(() => Comment)
-    commentList: Comment[] = [];
+interface UserAttribute {
+    nickname?: string | null;
+    hash?: string | null;
+    salt?: string | null;
+    hashVersion?: string | null;
+    account?: string | null;
+    admin?: boolean | null;
+    createdTime?: Date | null;
+    deletedTime?: Date | null;
+    postList?: Post[] | null;
+    historyList?: History[] | null;
+    commentList?: Comment[] | null;
 }
 
 @Table({
     paranoid: true,
     omitNull: true
 })
-export class Post extends Model {
-    @Column(DataType.STRING(250))
-    title: string = '';
-
-    @Column(DataType.DATE)
-    revisedTime: Date = new Date();
+export class User extends Model<UserAttribute> {
+    @Column(DataType.STRING(30))
+    nickname: UserAttribute['nickname'];
 
     @Column
-    viewCount: number = 0;
+    hash: UserAttribute['hash'];
 
     @Column
-    likeCount: number = 0;
+    salt: UserAttribute['salt'];
 
     @Column
-    dislikeCount: number = 0;
+    hashVersion: UserAttribute['hashVersion'];
+
+    @Column(DataType.STRING(30))
+    account: UserAttribute['account'];
+
+    @Column
+    admin: UserAttribute['admin'];
 
     @CreatedAt
-    createdTime: Date = new Date();
+    createdTime: UserAttribute['createdTime'];
 
     @DeletedAt
-    deletedTime: Date = new Date();
+    deletedTime: UserAttribute['deletedTime'];
+
+    @HasMany(() => Post)
+    postList: UserAttribute['postList'];
+
+    @HasMany(() => History)
+    historyList: UserAttribute['historyList'];
+
+    @HasMany(() => Comment)
+    commentList: UserAttribute['commentList'];
+}
+
+interface PostAttribute {
+    title?: string | null;
+    revisedTime?: Date | null;
+    viewCount?: number | null;
+    likeCount?: number | null;
+    dislikeCount?: number | null;
+    createdTime?: Date | null;
+    deletedTime?: Date | null;
+    writerId?: number | null;
+    categoryId?: number | null;
+    commentList?: Comment | null;
+}
+@Table({
+    paranoid: true,
+    omitNull: true
+})
+export class Post extends Model<PostAttribute> {
+    @Column(DataType.STRING(250))
+    title: PostAttribute['title'];
+
+    @Column(DataType.DATE)
+    revisedTime: PostAttribute['revisedTime'];
+
+    @Column
+    viewCount: PostAttribute['viewCount'];
+
+    @Column
+    likeCount: PostAttribute['likeCount'];
+
+    @Column
+    dislikeCount: PostAttribute['dislikeCount'];
+
+    @CreatedAt
+    createdTime: PostAttribute['createdTime'];
+
+    @DeletedAt
+    deletedTime: PostAttribute['deletedTime'];
 
     @ForeignKey(() => User)
     @Column
-    writerId: number = 0;
+    writerId: PostAttribute['writerId'];
 
     @ForeignKey(() => Category)
     @Column
-    categoryId: number = 0;
+    categoryId: PostAttribute['categoryId'];
 
     @HasMany(() => Comment)
-    commentList: Comment[] = [];
+    commentList: PostAttribute['commentList'];
+}
+
+interface CategoryAttribute {
+    label?: string | null;
+    postList?: Post[] | null;
 }
 
 @Table({
     timestamps: false,
     omitNull: true
 })
-export class Category extends Model {
+export class Category extends Model<CategoryAttribute> {
     @Column(DataType.STRING(10))
-    label: string = '';
+    label: CategoryAttribute['label'];
 
     @HasMany(() => Post)
-    postList: Post[] = [];
+    postList: CategoryAttribute['postList'];
+}
+
+interface CommentAttribute {
+    content?: string | null;
+    createdTime?: Date | null;
+    writerId?: number | null;
+    postId?: number | null;
 }
 
 @Table({
     paranoid: true,
     omitNull: true
 })
-export class Comment extends Model {
+export class Comment extends Model<CommentAttribute> {
     @Column(DataType.STRING(500))
-    content: string = '';
+    content: CommentAttribute['content'];
 
     @CreatedAt
-    createdTime: Date = new Date();
+    createdTime: CommentAttribute['createdTime'];
 
     @ForeignKey(() => User)
     @Column
-    writerId: number = 0;
+    writerId: CommentAttribute['writerId'];
 
     @ForeignKey(() => Post)
     @Column
-    postId: number = 0;
+    postId: CommentAttribute['postId'];
+}
+
+interface HistoryAttribute {
+    latitude?: number | null;
+    longitude?: number | null;
+    createdTime?: Date | null;
+    fishId?: number | null;
+    userId?: number | null;
 }
 
 @Table({
     paranoid: true,
     omitNull: true
 })
-export class History extends Model {
+export class History extends Model<HistoryAttribute> {
     @Column(DataType.REAL)
-    latitude: number = 0;
+    latitude: HistoryAttribute['latitude'];
 
     @Column(DataType.REAL)
-    longitude: number = 0;
+    longitude:HistoryAttribute['longitude'];
 
     @CreatedAt
-    createdTime: Date = new Date();
+    createdTime: HistoryAttribute['createdTime'];
 
     @ForeignKey(() => Fish)
     @Column
-    fishId: number = 0;
+    fishId: HistoryAttribute['fishId'];
 
     @ForeignKey(() => User)
     @Column
-    userId: number = 0; 
+    userId: HistoryAttribute['userId']; 
+}
+
+interface FishAttribute {
+    name?: string | null;
+    historyList?: History[] | null;
 }
 
 @Table({
     timestamps: false,
     omitNull: true
 })
-export class Fish extends Model {
+export class Fish extends Model<FishAttribute> {
     @Column(DataType.STRING(100))
-    name: string = '';
+    name: FishAttribute['name'];
 
     @HasMany(() => History)
-    historyList: History[] = [];
+    historyList: FishAttribute['historyList'];
 }
+
