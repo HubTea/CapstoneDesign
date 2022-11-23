@@ -31,10 +31,12 @@ makeSchema<DatabaseReplicationConfig>({
 export class Config {
     databaseReplication: DatabaseReplicationConfig = 
         new DatabaseReplicationConfig();
+    jwtSecret: string = '';
 }
 
 export let configSchema = makeSchema<Config>({
-    databaseReplication: databaseReplicationConfigSchema
+    databaseReplication: databaseReplicationConfigSchema,
+    jwtSecret: joi.string().required()
 });
 
 // export class StaticConfig {
