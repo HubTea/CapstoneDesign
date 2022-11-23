@@ -66,6 +66,7 @@ export class User extends Model<UserAttribute> implements UserAttribute{
 
 interface PostAttribute {
     title?: string | null;
+    content?: string | null;
     revisedTime?: Date | null;
     viewCount?: number | null;
     likeCount?: number | null;
@@ -83,6 +84,9 @@ interface PostAttribute {
 export class Post extends Model<PostAttribute> implements PostAttribute{
     @Column(DataType.STRING(250))
     title: PostAttribute['title'];
+
+    @Column(DataType.STRING(10000))
+    content: PostAttribute['content'];
 
     @Column(DataType.DATE)
     revisedTime: PostAttribute['revisedTime'];
