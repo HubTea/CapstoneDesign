@@ -28,7 +28,7 @@ interface UserAttribute {
     paranoid: true,
     omitNull: true
 })
-export class User extends Model<UserAttribute> {
+export class User extends Model<UserAttribute> implements UserAttribute{
     @Column(DataType.STRING(30))
     nickname: UserAttribute['nickname'];
 
@@ -80,7 +80,7 @@ interface PostAttribute {
     paranoid: true,
     omitNull: true
 })
-export class Post extends Model<PostAttribute> {
+export class Post extends Model<PostAttribute> implements PostAttribute{
     @Column(DataType.STRING(250))
     title: PostAttribute['title'];
 
@@ -123,7 +123,9 @@ interface CategoryAttribute {
     timestamps: false,
     omitNull: true
 })
-export class Category extends Model<CategoryAttribute> {
+export class Category 
+    extends Model<CategoryAttribute> 
+    implements CategoryAttribute {
     @Unique
     @Column(DataType.STRING(10))
     label: CategoryAttribute['label'];
@@ -143,7 +145,9 @@ interface CommentAttribute {
     paranoid: true,
     omitNull: true
 })
-export class Comment extends Model<CommentAttribute> {
+export class Comment 
+    extends Model<CommentAttribute> 
+    implements CommentAttribute {
     @Column(DataType.STRING(500))
     content: CommentAttribute['content'];
 
@@ -171,7 +175,9 @@ interface HistoryAttribute {
     paranoid: true,
     omitNull: true
 })
-export class History extends Model<HistoryAttribute> {
+export class History 
+    extends Model<HistoryAttribute> 
+    implements HistoryAttribute {
     @Column(DataType.REAL)
     latitude: HistoryAttribute['latitude'];
 
@@ -199,7 +205,7 @@ interface FishAttribute {
     timestamps: false,
     omitNull: true
 })
-export class Fish extends Model<FishAttribute> {
+export class Fish extends Model<FishAttribute> implements FishAttribute {
     @Column(DataType.STRING(100))
     name: FishAttribute['name'];
 
