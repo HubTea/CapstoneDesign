@@ -11,6 +11,7 @@ import {
 } from 'sequelize-typescript';
 
 interface UserAttribute {
+    id?: number | null;
     nickname?: string | null;
     hash?: string | null;
     salt?: string | null;
@@ -65,6 +66,7 @@ export class User extends Model<UserAttribute> implements UserAttribute{
 }
 
 interface PostAttribute {
+    id?: number | null;
     title?: string | null;
     content?: string | null;
     revisedTime?: Date | null;
@@ -119,6 +121,7 @@ export class Post extends Model<PostAttribute> implements PostAttribute{
 }
 
 interface CategoryAttribute {
+    id?: number | null;
     label?: string | null;
     postList?: Post[] | null;
 }
@@ -139,6 +142,7 @@ export class Category
 }
 
 interface CommentAttribute {
+    id?: number | null;
     content?: string | null;
     createdTime?: Date | null;
     writerId?: number | null;
@@ -168,6 +172,7 @@ export class Comment
 }
 
 interface HistoryAttribute {
+    id?: number | null;
     latitude?: number | null;
     longitude?: number | null;
     createdTime?: Date | null;
@@ -201,6 +206,7 @@ export class History
 }
 
 interface FishAttribute {
+    id?: number | null;
     name?: string | null;
     historyList?: History[] | null;
 }
