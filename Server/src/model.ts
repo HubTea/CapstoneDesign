@@ -3,6 +3,7 @@ import {
     Table, 
     Column,
     HasMany,
+    BelongsTo,
     ForeignKey,
     DataType,
     CreatedAt,
@@ -33,20 +34,20 @@ export class User extends Model<UserAttribute> implements UserAttribute{
     @Column(DataType.STRING(30))
     nickname: UserAttribute['nickname'];
 
-    @Column
+    @Column(DataType.STRING)
     hash: UserAttribute['hash'];
 
-    @Column
+    @Column(DataType.STRING)
     salt: UserAttribute['salt'];
 
-    @Column
+    @Column(DataType.STRING)
     hashVersion: UserAttribute['hashVersion'];
 
     @Unique
     @Column(DataType.STRING(30))
     account: UserAttribute['account'];
 
-    @Column
+    @Column(DataType.BOOLEAN)
     admin: UserAttribute['admin'];
 
     @CreatedAt
@@ -65,7 +66,7 @@ export class User extends Model<UserAttribute> implements UserAttribute{
     commentList: UserAttribute['commentList'];
 }
 
-interface PostAttribute {
+export interface PostAttribute {
     id?: number | null;
     title?: string | null;
     content?: string | null;
@@ -78,6 +79,8 @@ interface PostAttribute {
     writerId?: number | null;
     categoryId?: number | null;
     commentList?: Comment | null;
+    writer?: User | null;
+    category?: Category | null;
 }
 @Table({
     paranoid: true,
@@ -93,13 +96,13 @@ export class Post extends Model<PostAttribute> implements PostAttribute{
     @Column(DataType.DATE)
     revisedTime: PostAttribute['revisedTime'];
 
-    @Column
+    @Column(DataType.INTEGER)
     viewCount: PostAttribute['viewCount'];
 
-    @Column
+    @Column(DataType.INTEGER)
     likeCount: PostAttribute['likeCount'];
 
-    @Column
+    @Column(DataType.INTEGER)
     dislikeCount: PostAttribute['dislikeCount'];
 
     @CreatedAt
@@ -109,15 +112,21 @@ export class Post extends Model<PostAttribute> implements PostAttribute{
     deletedTime: PostAttribute['deletedTime'];
 
     @ForeignKey(() => User)
-    @Column
+    @Column(DataType.INTEGER)
     writerId: PostAttribute['writerId'];
 
     @ForeignKey(() => Category)
-    @Column
+    @Column(DataType.INTEGER)
     categoryId: PostAttribute['categoryId'];
 
     @HasMany(() => Comment)
     commentList: PostAttribute['commentList'];
+
+    @BelongsTo(() => User)
+    writer: PostAttribute['writer'];
+
+    @BelongsTo(() => Category)
+    category?: PostAttribute['category'];
 }
 
 interface CategoryAttribute {
@@ -163,11 +172,11 @@ export class Comment
     createdTime: CommentAttribute['createdTime'];
 
     @ForeignKey(() => User)
-    @Column
+    @Column(DataType.INTEGER)
     writerId: CommentAttribute['writerId'];
 
     @ForeignKey(() => Post)
-    @Column
+    @Column(DataType.INTEGER)
     postId: CommentAttribute['postId'];
 }
 
@@ -197,11 +206,11 @@ export class History
     createdTime: HistoryAttribute['createdTime'];
 
     @ForeignKey(() => Fish)
-    @Column
+    @Column(DataType.INTEGER)
     fishId: HistoryAttribute['fishId'];
 
     @ForeignKey(() => User)
-    @Column
+    @Column(DataType.INTEGER)
     userId: HistoryAttribute['userId']; 
 }
 
