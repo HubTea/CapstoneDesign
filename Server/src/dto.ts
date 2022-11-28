@@ -26,7 +26,7 @@ export class PostCreationDto {
 }
 
 export class CursorContainer {
-    cursor?: string = '';
+    cursor?: string;
 }
 
 export class PostListQueryDto extends CursorContainer{
