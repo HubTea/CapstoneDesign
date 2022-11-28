@@ -41,7 +41,15 @@ export class DatabaseConnectionContainer {
         let sequelize = new Sequelize({
             dialect: 'postgres',
             replication: config.databaseReplication,
-            repositoryMode: true
+            repositoryMode: true,
+            models: [
+                model.User,
+                model.Post,
+                model.Category,
+                model.Comment,
+                model.Fish,
+                model.History
+            ]
         });
         let repository = new RepositoryCollection(sequelize);
 
