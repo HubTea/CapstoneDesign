@@ -25,7 +25,7 @@ export class AuthenticationController {
         let jwtSecret = this.configContainer.get().jwtSecret;
         let repository = this.databaseConnectionContainer.get().repository;
 
-        let token = this.authenticationService.authenticate(
+        let token = await this.authenticationService.authenticate(
             repository, authenticationDto, jwtSecret
         );
 
