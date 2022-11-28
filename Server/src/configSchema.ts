@@ -1,4 +1,4 @@
-import joi from 'joi';
+import * as joi from 'joi';
 import { makeSchema } from './utility/joi';
 
 export class DatabaseConfig {

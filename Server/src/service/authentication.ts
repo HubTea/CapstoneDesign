@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
 import { RepositoryCollection } from './databaseConnectionContainer';
 import { AuthenticationDto } from '../dto';
 import { 
