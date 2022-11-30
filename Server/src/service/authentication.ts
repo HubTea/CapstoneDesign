@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { RepositoryCollection } from './databaseConnectionContainer';
-import { AuthenticationDto } from '../dto';
+import { 
+    AuthenticationDto,
+    JwtContent 
+} from '../dto';
 import { 
     NotFound,
     Unauthorized
@@ -35,11 +38,13 @@ export class AuthenticationService {
         if(!authenticated){
             throw new Unauthorized(null);
         }
+
+        let content = new JwtContent();
+
+        content.account = authenticationDto.account;
             
         let token = jwt.sign(
-            {
-                account: authenticationDto.account
-            }, 
+            content, 
             jwtSecret, 
             {
                 expiresIn: '7d'
@@ -47,5 +52,28 @@ export class AuthenticationService {
         )
 
         return token;
+    }
+
+    getPayload(token: string, jwtSecret: string) {
+        let payload: jwt.JwtPayload | string | null = null;
+
+        try { 
+            payload = jwt.verify(token, jwtSecret);
+        }
+        catch (err) {
+            throw new Unauthorized(err);
+        }
+
+        if(
+            typeof payload == 'string' ||
+            typeof payload!.account != 'string'
+        ) {
+            throw new Unauthorized(null);
+        }
+
+        let content = new JwtContent();
+
+        content.account = payload.account;
+        return content;        
     }
 }

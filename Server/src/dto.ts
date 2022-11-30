@@ -83,3 +83,7 @@ export class HistoryCreationResultDto {
 export class FishClassDto {
     label: string = '';
 }
+
+export class JwtContent {
+    account: string | null = null;
+}
