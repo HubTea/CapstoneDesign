@@ -44,24 +44,17 @@ export class PostController {
     ) {
         let repository = this.databaseConnectionContainer.get().repository;
         let config = this.configContainer.get();
-        let payload: jwt.JwtPayload | string | null = null;
 
-        try { 
-            payload = jwt.verify(token, config.jwtSecret);
-        }
-        catch (err) {
-            throw new Unauthorized(err);
-        }
-
-        if(
-            typeof payload == 'string' ||
-            typeof payload!.account != 'string'
-        ) {
+        let content = this.authenticationService.getPayload(
+            token, config.jwtSecret
+        );
+        
+        if(content.account == null) {
             throw new Unauthorized(null);
         }
 
         return await this.postService.register(
-            repository, payload!.account, postCreationDto
+            repository, content.account, postCreationDto
         );
     }
 
