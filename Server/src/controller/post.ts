@@ -12,12 +12,15 @@ import {
     DatabaseConnectionContainer
 } from '../service/databaseConnectionContainer';
 import { PostService } from '../service/post';
+import { AuthenticationService } from '../service/authentication';
 import { ConfigContainer } from '../service/configContainer';
 import { 
     PostCreationDto,
     PostListQueryDto,
     ListDto,
-    SimplePostDto
+    SimplePostDto,
+    CommentCreationDto,
+    CommentListQueryDto
 } from '../dto';
 import {
     Unauthorized
@@ -28,6 +31,7 @@ export class PostController {
     constructor(
         readonly databaseConnectionContainer: DatabaseConnectionContainer,
         readonly postService: PostService,
+        readonly authenticationService: AuthenticationService,
         readonly configContainer: ConfigContainer
     ) {
 
@@ -91,12 +95,42 @@ export class PostController {
     }
 
     @Post('/:postId/comment')
-    async writeComment() {
+    async writeComment(
+        @Param('postId') postIdString: string,
+        @Headers('Authorization') token: string,
+        @Body() commentCreationDto: CommentCreationDto
+    ) {
+        let repository = this.databaseConnectionContainer.get().repository;
+        let config = this.configContainer.get();
+        let payload = this.authenticationService.getPayload(
+            token, config.jwtSecret
+        );
+        let postId = parseInt(postIdString);
 
+        if(!payload.account) {
+            throw new Unauthorized(null);
+        }
+        
+        await this.postService.writeComment(
+            repository, payload.account, postId, commentCreationDto
+        );
     }
 
     @Get(':postId/comment')
-    async getCommentList() {
+    async getCommentList(
+        @Param('postId') postIdString: string,
+        @Body() commentListQueryDto: CommentListQueryDto
+    ) {
+        let repository = this.databaseConnectionContainer.get().repository;
+        let postId = parseInt(postIdString);
+        let cursor: string | null = null;
 
+        if(commentListQueryDto.cursor != undefined) {
+            cursor = commentListQueryDto.cursor;
+        }
+
+        return await this.postService.getCommentList(
+            repository, postId, cursor
+        );
     }
 }

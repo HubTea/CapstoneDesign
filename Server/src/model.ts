@@ -150,12 +150,14 @@ export class Category
     postList: CategoryAttribute['postList'];
 }
 
-interface CommentAttribute {
+export interface CommentAttribute {
     id?: number | null;
     content?: string | null;
     createdTime?: Date | null;
     writerId?: number | null;
     postId?: number | null;
+    writer?: User | null;
+    post?: Post | null;
 }
 
 @Table({
@@ -178,6 +180,12 @@ export class Comment
     @ForeignKey(() => Post)
     @Column(DataType.INTEGER)
     postId: CommentAttribute['postId'];
+
+    @BelongsTo(() => User)
+    writer: CommentAttribute['writer'];
+
+    @BelongsTo(() => Post)
+    post: CommentAttribute['post'];
 }
 
 interface HistoryAttribute {

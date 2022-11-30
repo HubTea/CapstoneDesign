@@ -5,11 +5,14 @@ import {
     PostCreationDto,
     ListDto,
     SimplePostDto,
-    FullPostDto
+    FullPostDto,
+    CommentCreationDto,
+    CommentDto
 } from '../dto';
 import { NotFound } from '../error';
 import { 
     PostAttribute,
+    CommentAttribute,
     Post
 } from '../model';
 
@@ -24,15 +27,7 @@ export class PostService {
             repository, postCreationDto.category
         );
 
-        let writer = await repository.user.findOne({
-            where: {
-                account: account
-            }
-        });
-
-        if(writer == null) {
-            throw new NotFound(null);
-        }
+        let writer = await this.getUser(repository, account);
 
         await repository.post.create({
             title: postCreationDto.title,
@@ -62,7 +57,7 @@ export class PostService {
 
         if(typeof cursorString == 'string') {
             where.id = {
-                [sequelize.Op.lt]: cursorString.toString()
+                [sequelize.Op.lt]: parseInt(cursorString)
             }
         }
 
@@ -78,7 +73,7 @@ export class PostService {
 
         if(rawList.length == limit) {
             bound = listLength;
-            listDto.cursor = rawList[listLength - 1].id;
+            listDto.cursor = rawList[listLength - 1].id.toString();
         }
         
         for(let i = 0; i < bound; ++i) {
@@ -110,6 +105,68 @@ export class PostService {
         return dto;
     }
 
+    async writeComment(
+        repository: RepositoryCollection, 
+        account: string,
+        postId: number, 
+        commentCreationDto: CommentCreationDto
+    ) {
+        let user = await this.getUser(repository, account);
+
+        await repository.comment.create({
+            content: commentCreationDto.content,
+            writerId: user.id,
+            postId: postId
+        });
+    }
+
+    async getCommentList(
+        repository: RepositoryCollection,
+        postId: number,
+        cursorString: string | null
+    ) {
+        let listLength = 30;
+        let limit = listLength + 1;
+        let where: sequelize.WhereOptions<CommentAttribute> = {
+            postId: postId
+        };
+
+        if(typeof cursorString == 'string') {
+            where.id = {
+                [sequelize.Op.lt]: parseInt(cursorString)
+            }
+        }
+
+        let rawList = await repository.comment.findAll({
+            where: where,
+            include: [repository.user],
+            limit: limit,
+            order: [['id', 'ASC']]
+        });
+
+        let listDto = new ListDto<CommentDto>();
+        let bound = rawList.length;
+
+        if(rawList.length == limit) {
+            bound = listLength;
+            listDto.cursor = rawList[listLength - 1].id.toString();
+        }
+
+        for(let i = 0; i < bound; ++i) {
+            let element = rawList[i];
+            let dto = new CommentDto();
+
+            dto.content = element.content!;
+            dto.creationTime = element.createdTime!.toISOString();
+            dto.user.id = element.writer!.id!;
+            dto.user.nickname = element.writer!.nickname!;
+
+            listDto.list.push(dto);
+        }
+
+        return listDto;
+    }
+
     private async getCategory(repository: RepositoryCollection, label: string) {
         let category = await repository.category.findOne({
             where: {
@@ -122,6 +179,20 @@ export class PostService {
         }
 
         return category;
+    }
+
+    private async getUser(repository: RepositoryCollection, account: string) {
+        let user = await repository.user.findOne({
+            where: {
+                account: account
+            }
+        });
+
+        if(!user) {
+            throw new NotFound(null);
+        }
+
+        return user;
     }
 
     private assignPostToSimplePostDto(dto: SimplePostDto, post: Post) {
