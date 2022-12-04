@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import * as fs from 'fs';
 import { UniqueConstraintError } from 'sequelize';
 import { RepositoryCollection } from './databaseConnectionContainer';
 import { UserCreationDto } from '../dto';
@@ -16,11 +17,21 @@ export class UserService {
     ) {
         let salt = await bcrypt.genSalt();
         let hash = await bcrypt.hash(userCreationDto.password, salt);
+        let account = userCreationDto.account;
+        let dirPath = `../../CapstoneConfig/historyImage/${account}`;
+
+        try {
+            let dir = await fs.promises.opendir(dirPath);
+            await dir.close();
+        }
+        catch(err) {
+            await fs.promises.mkdir(dirPath);
+        }
 
         try{
             await repository.user.create({
                 nickname: userCreationDto.nickname,
-                account: userCreationDto.account,
+                account: account,
                 salt: salt,
                 hash: hash,
                 hashVersion: '0',

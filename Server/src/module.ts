@@ -3,11 +3,13 @@ import { PostService } from './service/post';
 import { UserService} from './service/user';
 import { AuthenticationService } from './service/authentication';
 import { CategoryService } from './service/category';
+import { HistoryService } from './service/history';
 
 import { PostController } from './controller/post';
 import { UserController } from './controller/user';
 import { AuthenticationController} from './controller/authentication';
 import { CategoryController } from './controller/category';
+import { HistoryController } from './controller/history';
 
 import { 
   DatabaseConnectionContainer 
@@ -20,13 +22,15 @@ import { ConfigListener } from './service/configListener';
     PostController, 
     UserController, 
     AuthenticationController,
-    CategoryController
+    CategoryController,
+    HistoryController
   ],
   providers: [
     PostService, 
     UserService, 
     AuthenticationService,
     CategoryService,
+    HistoryService,
 
     DatabaseConnectionContainer,
     ConfigContainer,
