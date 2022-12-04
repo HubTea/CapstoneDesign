@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as sequelize from 'sequelize';
 import { RepositoryCollection } from './databaseConnectionContainer';
+import { UserService } from './user';
 import { 
     PostCreationDto,
     ListDto,
@@ -18,6 +19,10 @@ import {
 
 @Injectable()
 export class PostService {
+    constructor(readonly userService: UserService) {
+
+    }
+
     async register(
         repository: RepositoryCollection,
         account: string,
@@ -27,7 +32,9 @@ export class PostService {
             repository, postCreationDto.category
         );
 
-        let writer = await this.getUser(repository, account);
+        let writer = await this.userService.getUserByAccount(
+            repository, account
+        );
 
         await repository.post.create({
             title: postCreationDto.title,
@@ -111,7 +118,7 @@ export class PostService {
         postId: number, 
         commentCreationDto: CommentCreationDto
     ) {
-        let user = await this.getUser(repository, account);
+        let user = await this.userService.getUserByAccount(repository, account);
 
         await repository.comment.create({
             content: commentCreationDto.content,

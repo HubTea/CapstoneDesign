@@ -3,7 +3,10 @@ import * as bcrypt from 'bcrypt';
 import { UniqueConstraintError } from 'sequelize';
 import { RepositoryCollection } from './databaseConnectionContainer';
 import { UserCreationDto } from '../dto';
-import { AlreadyExist } from '../error';
+import { 
+    AlreadyExist,
+    NotFound,
+} from '../error';
 
 @Injectable()
 export class UserService {
@@ -32,7 +35,20 @@ export class UserService {
                 throw err;
             }
         }
-        
+    }
+
+    async getUserByAccount(repository: RepositoryCollection, account: string) {
+        let user = await repository.user.findOne({
+            where: {
+                account: account
+            }
+        });
+
+        if(!user) {
+            throw new NotFound(null);
+        }
+
+        return user;
     }
 }
 
