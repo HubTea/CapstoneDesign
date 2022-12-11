@@ -44,7 +44,7 @@ export class AuthenticationService {
         content.account = authenticationDto.account;
             
         let token = jwt.sign(
-            content, 
+            JSON.parse(JSON.stringify(content)), 
             jwtSecret, 
             {
                 expiresIn: '7d'
