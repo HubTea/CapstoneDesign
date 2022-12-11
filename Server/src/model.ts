@@ -195,6 +195,7 @@ interface HistoryAttribute {
     createdTime?: Date | null;
     fishId?: number | null;
     userId?: number | null;
+    fish?: Fish | null;
 }
 
 @Table({
@@ -220,6 +221,9 @@ export class History
     @ForeignKey(() => User)
     @Column(DataType.INTEGER)
     userId: HistoryAttribute['userId']; 
+
+    @BelongsTo(() => Fish)
+    fish: HistoryAttribute['fish'];
 }
 
 interface FishAttribute {

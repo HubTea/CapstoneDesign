@@ -1,5 +1,6 @@
 import { 
     Controller,
+    Get,
     Post,
     Put,
     Body,
@@ -8,8 +9,6 @@ import {
     Req
 } from '@nestjs/common';
 import * as express from 'express';
-import * as fs from 'fs';
-import * as stream from 'stream';
 import {
     DatabaseConnectionContainer
 } from '../service/databaseConnectionContainer';
@@ -33,6 +32,13 @@ export class HistoryController {
         readonly configContainer: ConfigContainer
     ) {
 
+    }
+
+    @Get('/')
+    async getList() {
+        let repository = this.databaseConnectionContainer.get().repository;
+
+        return await this.historyService.getList(repository);
     }
 
     @Post('/')

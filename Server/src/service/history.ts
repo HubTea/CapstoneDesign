@@ -2,9 +2,14 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as express from 'express';
+import * as sequelize from 'sequelize';
 import * as tf from '@tensorflow/tfjs-node';
 import { RepositoryCollection } from './databaseConnectionContainer';
-import { HistoryCreationDto } from '../dto';
+import { 
+    HistoryCreationDto,
+    HistoryDto,
+    HistoryListDto
+} from '../dto';
 import { UserService } from './user';
 import { 
     Unauthorized,
@@ -42,6 +47,29 @@ export class HistoryService {
         });
 
         return history.id as number;
+    }
+
+    async getList(repository: RepositoryCollection) {
+        let rawList = await repository.history.findAll({
+            include: [repository.fish]
+        });
+        let historyListDto = new HistoryListDto();
+
+        for(let element of rawList) {
+            let dto = new HistoryDto();
+
+            if(!element.fish) {
+                continue;
+            }
+
+            dto.label = element.fish.name!;
+            dto.latitude = element.latitude!;
+            dto.longitude = element.longitude!;
+            dto.timestamp = element.createdTime!.toISOString();
+            historyListDto.list.push(dto);
+        }
+
+        return historyListDto;
     }
 
     async putFishImage(

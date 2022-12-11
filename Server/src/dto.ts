@@ -87,3 +87,14 @@ export class FishClassDto {
 export class JwtContent {
     account: string | null = null;
 }
+
+export class HistoryDto {
+    latitude: number = 0;
+    longitude: number = 0;
+    timestamp: string = '';
+    label: string = '';
+}
+
+export class HistoryListDto{
+    list: HistoryDto[] = [];
+}
