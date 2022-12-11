@@ -35,7 +35,7 @@ export class HistoryController {
 
     }
 
-    @Post('/history')
+    @Post('/')
     async register(
         @Body() historyCreationDto: HistoryCreationDto,
         @Headers('Authorization') token: string
@@ -58,7 +58,7 @@ export class HistoryController {
         return result;
     }
 
-    @Put('/history/:historyId/image')
+    @Put('/:historyId/image')
     async putFishImage(
         @Req() req: express.Request,
         @Param('historyId') historyIdString: string,
