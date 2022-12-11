@@ -1,16 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as stream from 'stream';
-import { Request } from 'express';
+import * as express from 'express';
+import * as tf from '@tensorflow/tfjs-node';
 import { RepositoryCollection } from './databaseConnectionContainer';
 import { HistoryCreationDto } from '../dto';
 import { UserService } from './user';
-import { Unauthorized } from '../error';
+import { 
+    Unauthorized,
+    NotFound
+} from '../error';
+
+let app = express();
+
+app.listen(9090);
+app.use(express.static('../../CapstoneConfig/tensorflow'));
 
 @Injectable()
 export class HistoryService {
-    constructor(readonly userService: UserService) {
+    readonly historyImageDirectory = '../../CapstoneConfig/historyImage';
+    readonly imageSuffix = 'jpg';
+    readonly modelPromise: Promise<tf.GraphModel>;
 
+    constructor(readonly userService: UserService) {
+        this.modelPromise = tf.loadGraphModel(
+            'http://localhost:9090/model.json'
+        );
     }
 
     async register(
@@ -33,7 +48,7 @@ export class HistoryService {
         repository: RepositoryCollection,
         account: string,
         historyId: number,
-        req: Request
+        req: express.Request
     ) {
         let user = await this.userService.getUserByAccount(
             repository, account
@@ -50,8 +65,8 @@ export class HistoryService {
             throw new Unauthorized(null);
         }
 
-        let dirPath = `../../CapstoneConfig/historyImage/${account}`;        
-        let filePath = `${dirPath}/${historyId}.jpg`;
+        let dirPath = `${this.historyImageDirectory}/${account}`;        
+        let filePath = `${dirPath}/${historyId}.${this.imageSuffix}`;
         let tmpFilePath = `${dirPath}/${historyId}.tmp`;
         let exist: boolean = true;
 
@@ -77,5 +92,79 @@ export class HistoryService {
             await fs.promises.rm(tmpFilePath);
             throw err;
         }
+    }
+
+    async classify(
+        repository: RepositoryCollection, 
+        account: string,
+        historyId: number
+    ) {
+        let user = await repository.user.findOne({
+            where: {
+                account: account
+            }
+        });
+        let history = await repository.history.findOne({
+            where: {
+                id: historyId
+            }
+        });
+
+        if(!user || !history) {
+            throw new NotFound(null);
+        }
+
+        if(user.id! != history.userId!) {
+            throw new Unauthorized(null);
+        }
+
+        let filePath = 
+            `${this.historyImageDirectory}/${account}/` + 
+            `${historyId}.${this.imageSuffix}`;
+        let fileBuffer = await fs.promises.readFile(filePath);
+        let fileArrayBuffer = new Uint8Array(
+            fileBuffer.buffer, fileBuffer.byteOffset, fileBuffer.byteLength
+        );
+        let image3d = tf.node.decodeJpeg(fileArrayBuffer);
+        let image4d = tf.reshape(
+            image3d, [1, image3d.shape[0], image3d.shape[1], 3]
+        );
+        let model = await this.modelPromise;
+        let output = await model.executeAsync(image4d) as tf.Tensor[];
+        let scoreList = (output[7].arraySync() as number[][][])[0][0];
+        let argMax = scoreList.indexOf(Math.max(...scoreList));
+        let table = [
+            '',
+            'black sea sprat',
+            'gilt head bream',
+            'horse mackerel',
+            'red mullet',
+            'red sea bream',
+            'sea bass',
+            'shrimp',
+            'striped red mullet',
+            'trout'
+        ];
+
+        if(argMax == 0) {
+            throw new NotFound(null);
+        }
+
+        let result = table[argMax];
+        let fish = await repository.fish.findOne({
+            where: {
+                name: result
+            }
+        });
+
+        if(!fish) {
+            throw new NotFound(null);
+        }
+
+        await repository.history.upsert({
+            id: history.id!,
+            fishId: fish.id!
+        });
+        return result;
     }
 }

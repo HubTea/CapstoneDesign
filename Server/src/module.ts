@@ -11,7 +11,8 @@ import { UserController } from './controller/user';
 import { AuthenticationController} from './controller/authentication';
 import { CategoryController } from './controller/category';
 import { HistoryController } from './controller/history';
-import { FishController } from './controller/fish'
+import { FishController } from './controller/fish';
+import { ClassificationController } from './controller/classification';
 
 import { 
   DatabaseConnectionContainer 
@@ -26,7 +27,8 @@ import { ConfigListener } from './service/configListener';
     AuthenticationController,
     CategoryController,
     HistoryController,
-    FishController
+    FishController,
+    ClassificationController
   ],
   providers: [
     PostService, 
