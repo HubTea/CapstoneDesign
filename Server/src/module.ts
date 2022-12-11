@@ -4,12 +4,14 @@ import { UserService} from './service/user';
 import { AuthenticationService } from './service/authentication';
 import { CategoryService } from './service/category';
 import { HistoryService } from './service/history';
+import { FishService } from './service/fish';
 
 import { PostController } from './controller/post';
 import { UserController } from './controller/user';
 import { AuthenticationController} from './controller/authentication';
 import { CategoryController } from './controller/category';
 import { HistoryController } from './controller/history';
+import { FishController } from './controller/fish'
 
 import { 
   DatabaseConnectionContainer 
@@ -23,7 +25,8 @@ import { ConfigListener } from './service/configListener';
     UserController, 
     AuthenticationController,
     CategoryController,
-    HistoryController
+    HistoryController,
+    FishController
   ],
   providers: [
     PostService, 
@@ -31,6 +34,7 @@ import { ConfigListener } from './service/configListener';
     AuthenticationService,
     CategoryService,
     HistoryService,
+    FishService,
 
     DatabaseConnectionContainer,
     ConfigContainer,
