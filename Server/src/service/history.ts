@@ -16,10 +16,10 @@ import {
     NotFound
 } from '../error';
 
-let app = express();
+// let app = express();
 
-app.listen(9090);
-app.use(express.static('../../CapstoneConfig/tensorflow'));
+// app.listen(9090);
+// app.use(express.static('../../CapstoneConfig/tensorflow'));
 
 @Injectable()
 export class HistoryService {

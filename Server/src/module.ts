@@ -27,16 +27,13 @@ import { ConfigListener } from './service/configListener';
     UserController, 
     AuthenticationController,
     CategoryController,
-    HistoryController,
     FishController,
-    ClassificationController
   ],
   providers: [
     PostService, 
     UserService, 
     AuthenticationService,
     CategoryService,
-    HistoryService,
     FishService,
 
     DatabaseConnectionContainer,
