@@ -13,6 +13,7 @@ import { CategoryController } from './controller/category';
 import { HistoryController } from './controller/history';
 import { FishController } from './controller/fish';
 import { ClassificationController } from './controller/classification';
+import { AgentController } from './controller/agent';
 
 import { 
   DatabaseConnectionContainer 
@@ -44,5 +45,12 @@ import { ConfigListener } from './service/configListener';
   ],
 })
 export class AppModule {
+
+}
+
+@Module({
+  controllers: [AgentController]
+})
+export class  AgentModule {
 
 }

@@ -7,9 +7,10 @@ import {
 } from '../configSchema';
 import { DatabaseConnectionContainer } from './databaseConnectionContainer';
 import { ConfigContainer } from './configContainer';
+import { bridge, BridgeListener } from './bridge';
 
 @Injectable()
-export class ConfigListener {
+export class ConfigListener implements BridgeListener {
     constructor(
         readonly databaseConnectionContainer: DatabaseConnectionContainer,
         readonly configContainer: ConfigContainer
@@ -25,8 +26,13 @@ export class ConfigListener {
         let config = validation.value as Config;
 
         this.update(config);
+        bridge.register(this);
     }
 
+    receive(config: Config) {
+        this.update(config);
+    }
+    
     update(config: Config) {
         this.databaseConnectionContainer.update(config);
         this.configContainer.update(config);
