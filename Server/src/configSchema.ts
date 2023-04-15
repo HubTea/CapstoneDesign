@@ -23,29 +23,22 @@ export class DatabaseReplicationConfig {
 }
 
 export let databaseReplicationConfigSchema = 
-makeSchema<DatabaseReplicationConfig>({
-    write: databaseConfigSchema,
-    read: joi.array().items(databaseConfigSchema).required()
-});
+    makeSchema<DatabaseReplicationConfig>({
+        write: databaseConfigSchema,
+        read: joi.array().items(databaseConfigSchema).required()
+    });
 
 export class Config {
     databaseReplication: DatabaseReplicationConfig = 
         new DatabaseReplicationConfig();
+    databaseRetryMax: number = 0;
+    databasePoolMax: number = 0;
     jwtSecret: string = '';
 }
 
 export let configSchema = makeSchema<Config>({
     databaseReplication: databaseReplicationConfigSchema,
+    databaseRetryMax: joi.number().required(),
+    databasePoolMax: joi.number().required(),
     jwtSecret: joi.string().required()
 });
-
-// export class StaticConfig {
-//     configServerHost: string = '';
-//     configServerPort: number = 0;
-// }
-
-// let staticConfigSchemaDefinition: SamePropertyName<StaticConfig> = {
-//     configServerHost: joi.string().required(),
-//     configServerPort: joi.number().required()
-// }
-// export let staticConfigSchema = joi.object(staticConfigSchemaDefinition);

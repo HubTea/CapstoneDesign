@@ -38,7 +38,7 @@ export class DatabaseConnectionContainer {
     private connection?: DatabaseConnection;
 
     update(config: Config) {
-        let sequelize = new Sequelize({
+        let sequelize = new Sequelize('', '', '', {
             dialect: 'postgres',
             replication: config.databaseReplication,
             repositoryMode: true,
@@ -49,7 +49,13 @@ export class DatabaseConnectionContainer {
                 model.Comment,
                 model.Fish,
                 model.History
-            ]
+            ],
+            retry: {
+                max: config.databaseRetryMax
+            },
+            pool: {
+                max: config.databasePoolMax
+            }
         });
         let repository = new RepositoryCollection(sequelize);
 
