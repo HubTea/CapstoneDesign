@@ -7,40 +7,35 @@ import { AlreadyExist } from '../error';
 
 @Injectable()
 export class FishService {
-    constructor() {
+  async register(repository: RepositoryCollection, fishClass: FishClassDto) {
+    try {
+      await repository.fish.create({
+        name: fishClass.label,
+      });
+    } catch (err) {
+      if (err instanceof sequelize.UniqueConstraintError) {
+        throw new AlreadyExist(err);
+      }
+    }
+  }
 
+  async getList(repository: RepositoryCollection) {
+    const rawList = await repository.fish.findAll();
+    const list: FishClassDto[] = [];
+
+    for (const element of rawList) {
+      const dto = new FishClassDto();
+
+      dto.label = element.name!;
+      list.push(dto);
     }
 
-    async register(repository: RepositoryCollection, fishClass: FishClassDto) {
-        try{
-            await repository.fish.create({
-                name: fishClass.label
-            });
-        }
-        catch(err) {
-            if(err instanceof sequelize.UniqueConstraintError) {
-                throw new AlreadyExist(err);
-            }
-        }
-    }
+    return list;
+  }
 
-    async getList(repository: RepositoryCollection) {
-        let rawList = await repository.fish.findAll();
-        let list: FishClassDto[] = [];
-
-        for(let element of rawList) {
-            let dto = new FishClassDto();
-
-            dto.label = element.name!;
-            list.push(dto);
-        }
-
-        return list;
-    }
-
-    async getImageStream(fishClass: FishClassDto) {
-        return fs.createReadStream(
-            `../../CapstoneConfig/fishImage/${fishClass.label}.jpg`
-        );
-    }
+  async getImageStream(fishClass: FishClassDto) {
+    return fs.createReadStream(
+      `../../CapstoneConfig/fishImage/${fishClass.label}.jpg`,
+    );
+  }
 }

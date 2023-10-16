@@ -1,100 +1,98 @@
 export class AuthenticationDto {
-    account: string = '';
-    password: string = '';
+  account = '';
+  password = '';
 }
 
 export class UserCreationDto extends AuthenticationDto {
-    nickname: string = '';
+  nickname = '';
 }
 
 export class AuthenticationResultDto {
-    token: string = '';
+  token = '';
 }
 
 export class CategoryCreationDto {
-    label: string = '';
+  label = '';
 }
 
 export class CategoryListDto {
-    list: string[] = [];
+  list: string[] = [];
 }
 
 export class PostCreationDto {
-    title: string = '';
-    content: string = '';
-    category: string = ''
+  title = '';
+  content = '';
+  category = '';
 }
 
 export class CursorContainer {
-    cursor?: string;
+  cursor?: string;
 }
 
-export class PostListQueryDto extends CursorContainer{
-    category?: string;
+export class PostListQueryDto extends CursorContainer {
+  category?: string;
 }
 
-export class CommentListQueryDto extends CursorContainer{
-
-}
+export class CommentListQueryDto extends CursorContainer {}
 
 export class ListDto<T> extends CursorContainer {
-    list: T[] = [];
+  list: T[] = [];
 }
 
 export class UserDto {
-    id: number = 0;
-    nickname: string = '';
+  id = 0;
+  nickname = '';
 }
 
 export class SimplePostDto {
-    id: number = 0;
-    title: string = '';
-    creationTime: string = '';
-    viewCount: number = 0;
-    likeCount: number = 0;
-    dislikeCount: number = 0;
-    category: string = '';
-    user: UserDto = new UserDto();
+  id = 0;
+  title = '';
+  creationTime = '';
+  viewCount = 0;
+  likeCount = 0;
+  dislikeCount = 0;
+  category = '';
+  user: UserDto = new UserDto();
 }
 
-export class FullPostDto extends SimplePostDto{
-    content: string = '';
+export class FullPostDto extends SimplePostDto {
+  content = '';
 }
 
 export class CommentCreationDto {
-    content: string = '';
+  content = '';
 }
 
 export class CommentDto extends CommentCreationDto {
-    creationTime: string = '';
-    user: UserDto = new UserDto();
+  creationTime = '';
+  user: UserDto = new UserDto();
 }
 
 export class HistoryCreationDto {
-    latitude: number = 0;
-    longitude: number = 0;
-    timestamp: string = '';
+  latitude = 0;
+  longitude = 0;
+  timestamp = '';
 }
 
 export class HistoryCreationResultDto {
-    id: number = 0;
+  id = 0;
 }
 
 export class FishClassDto {
-    label: string = '';
+  label = '';
 }
 
 export class JwtContent {
-    account: string | null = null;
+  account: string | null = null;
 }
 
 export class HistoryDto {
-    latitude: number = 0;
-    longitude: number = 0;
-    timestamp: string = '';
-    label: string = '';
+  latitude = 0;
+  longitude = 0;
+  timestamp = '';
+  label = '';
 }
 
-export class HistoryListDto{
-    list: HistoryDto[] = [];
+export class HistoryListDto {
+  list: HistoryDto[] = [];
 }

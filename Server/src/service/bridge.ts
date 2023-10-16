@@ -1,21 +1,21 @@
 import { Config } from '../configSchema';
 
 export interface BridgeListener {
-    receive(config: Config): void;
+  receive(config: Config): void;
 }
 
 class Bridge {
-    listenerList: BridgeListener[] = [];
+  listenerList: BridgeListener[] = [];
 
-    register(listener: BridgeListener) {
-        this.listenerList.push(listener);
-    }
+  register(listener: BridgeListener) {
+    this.listenerList.push(listener);
+  }
 
-    emit(config: Config) {
-        for(let listener of this.listenerList) {
-            listener.receive(config);
-        }
+  emit(config: Config) {
+    for (const listener of this.listenerList) {
+      listener.receive(config);
     }
+  }
 }
 
-export let bridge = new Bridge();
+export const bridge = new Bridge();
